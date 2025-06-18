@@ -18,7 +18,7 @@ function S_box = generate_sbox()
         y_seq = y_seq(201:end);
         
         % 生成矩阵B（8x8）
-        B_data = mod(floor((mod(x_seq + y_seq, 1)) * 1e6), 2);
+        B_data = mod(floor((mod(exp(x_seq) * 1e6, 1))), 2);
         B = reshape(B_data, 8, 8)'; % 按列填充
         
         % 检查B是否可逆（GF(2)）
@@ -53,7 +53,7 @@ function S_box = generate_sbox()
     
     % 步骤2(3)：生成仿射常数C
     sum_y = sum(y_seq);
-    c_decimal = mod(floor(mod(sum_y, 1) * 1e16), 256) + 1;
+    c_decimal = mod(floor(mod(sum_y + sum_y, 1) * 1e16), 256) + 1;
     C = de2bi(c_decimal, 8, 'left-msb')'; % 8x1列向量
     
     % 步骤2(4)：应用仿射变换 S1 = B * S0^T + C
